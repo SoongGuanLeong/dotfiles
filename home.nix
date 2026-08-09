@@ -18,6 +18,14 @@
     nodejs
   ];
 
+  home.file.".pi/agent/settings.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/settings.json";
+
+  home.file.".pi/agent/themes".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/themes";
+
   home.sessionVariables = {
     EDITOR = "nvim";
   };
