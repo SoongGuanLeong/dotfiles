@@ -47,6 +47,10 @@
     config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/projects/dotfiles/home/.config/herdr";
 
+  home.file.".config/wezterm/wezterm.lua".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.config/wezterm/wezterm.lua";
+
   home.sessionVariables = {
     EDITOR = "nvim";
   };
