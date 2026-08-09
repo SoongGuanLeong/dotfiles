@@ -35,6 +35,10 @@
     config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/extensions/calm";
 
+  home.file.".pi/agent/models.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/models.json";
+
   home.file.".config/nvim".source =
     config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/projects/dotfiles/home/.config/nvim";
