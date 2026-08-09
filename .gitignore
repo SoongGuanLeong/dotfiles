@@ -1,1 +1,7 @@
 result
+
+# herdr runtime artifacts
+home/.config/herdr/.plugins.lock
+home/.config/herdr/*.log
+home/.config/herdr/session.json
+home/.config/herdr/*.sock
