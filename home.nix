@@ -39,6 +39,10 @@
     config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/projects/dotfiles/home/.config/nvim";
 
+  home.file.".config/herdr".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.config/herdr";
+
   home.sessionVariables = {
     EDITOR = "nvim";
   };
