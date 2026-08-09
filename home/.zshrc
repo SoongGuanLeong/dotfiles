@@ -136,8 +136,3 @@ eval "$(zoxide init zsh)"
 alias ls="eza --icons"
 alias bat="batcat"
 alias fd="fdfind"
-
-# Nix-managed shell enhancements
-source "$HOME/.nix-profile/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-source "$HOME/.nix-profile/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-eval "$(starship init zsh)"

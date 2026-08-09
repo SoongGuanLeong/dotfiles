@@ -16,18 +16,11 @@
     fzf
     jq
     nodejs
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    starship
   ];
 
   home.sessionVariables = {
     EDITOR = "nvim";
   };
-
-  home.file.".zshrc".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/projects/dotfiles/home/.zshrc";
 
   programs.starship = {
     enable = true;
@@ -44,5 +37,15 @@
 
       cmd_duration.format = "[$duration]($style) ";
     };
+  };
+
+  programs.zsh = {
+    enable = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+
+    initContent = ''
+        source "${config.home.homeDirectory}/projects/dotfiles/home/.zshrc"
+    '';
   };
 }
