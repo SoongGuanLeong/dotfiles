@@ -34,6 +34,10 @@
     config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/extensions/calm";
 
+  home.file.".config/nvim".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.config/nvim";
+
   home.sessionVariables = {
     EDITOR = "nvim";
   };
