@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-ln -sfn "$DIR" ~/.dotfiles
+DOTFILES_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+
+export DOTFILES_USERNAME="$USER"
+export DOTFILES_HOME="$HOME"
+export DOTFILES_DIRECTORY
+
+ln -sfn "$DOTFILES_DIRECTORY" "$HOME/.dotfiles"
 
 exec nix run github:nix-community/home-manager/release-26.05 -- \
-  switch --flake ~/.dotfiles#weeboppa
+  switch --flake "$DOTFILES_DIRECTORY#default" --impure

@@ -108,7 +108,7 @@ export PATH="$HOME/.npm-global/bin:$PATH"
 source ~/.env_paths
 
 # bun completions
-[ -s "/home/weeboppa/.bun/_bun" ] && source "/home/weeboppa/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -119,10 +119,10 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # opencode
-export PATH=/home/weeboppa/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # fnm
-FNM_PATH="/home/weeboppa/.local/share/fnm"
+FNM_PATH="$HOME/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
   export PATH="$FNM_PATH:$PATH"
   eval "$(fnm env --shell zsh)"

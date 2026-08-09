@@ -7,10 +7,21 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, home-manager, ... }: {
-    homeConfigurations."weeboppa" = home-manager.lib.homeManagerConfiguration {
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      modules = [ ./home.nix ];
+  outputs = { nixpkgs, home-manager, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      homeConfigurations.default = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+
+        extraSpecialArgs = {
+          username = builtins.getEnv "DOTFILES_USERNAME";
+          homeDirectory = builtins.getEnv "DOTFILES_HOME";
+          dotfilesDirectory = builtins.getEnv "DOTFILES_DIRECTORY";
+        };
+
+        modules = [ ./home.nix ];
+      };
     };
-  };
 }

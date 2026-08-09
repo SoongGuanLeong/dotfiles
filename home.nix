@@ -1,8 +1,8 @@
-{ config, pkgs, ... }:
+{ config, pkgs, username, homeDirectory, dotfilesDirectory, ... }:
 
 {
-  home.username = "weeboppa";
-  home.homeDirectory = "/home/weeboppa";
+  home.username = username;
+  home.homeDirectory = homeDirectory;
 
   home.stateVersion = "26.05";
 
@@ -21,35 +21,35 @@
 
   home.file.".pi/agent/settings.json".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/settings.json";
+    "${dotfilesDirectory}/home/.pi/agent/settings.json";
 
   home.file.".pi/agent/themes".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/themes";
+    "${dotfilesDirectory}/home/.pi/agent/themes";
 
   home.file.".pi/agent/extensions/terminal-status-title.js".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/extensions/terminal-status-title.js";
+    "${dotfilesDirectory}/home/.pi/agent/extensions/terminal-status-title.js";
 
   home.file.".pi/agent/extensions/calm".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/extensions/calm";
+    "${dotfilesDirectory}/home/.pi/agent/extensions/calm";
 
   home.file.".pi/agent/models.json".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/models.json";
+    "${dotfilesDirectory}/home/.pi/agent/models.json";
 
   home.file.".config/nvim".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.config/nvim";
+    "${dotfilesDirectory}/home/.config/nvim";
 
   home.file.".config/herdr".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.config/herdr";
+    "${dotfilesDirectory}/home/.config/herdr";
 
   home.file.".config/wezterm/wezterm.lua".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/projects/dotfiles/home/.config/wezterm/wezterm.lua";
+    "${dotfilesDirectory}/home/.config/wezterm/wezterm.lua";
 
   home.sessionVariables = {
     EDITOR = "nvim";
@@ -78,7 +78,7 @@
     syntaxHighlighting.enable = true;
 
     initContent = ''
-        source "${config.home.homeDirectory}/projects/dotfiles/home/.zshrc"
+        source "${dotfilesDirectory}/home/.zshrc"
     '';
   };
 }
