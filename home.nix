@@ -30,6 +30,10 @@
     config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/extensions/terminal-status-title.js";
 
+  home.file.".pi/agent/extensions/calm".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/extensions/calm";
+
   home.sessionVariables = {
     EDITOR = "nvim";
   };
