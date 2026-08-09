@@ -26,6 +26,10 @@
     config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/themes";
 
+  home.file.".pi/agent/extensions/terminal-status-title.js".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/projects/dotfiles/home/.pi/agent/extensions/terminal-status-title.js";
+
   home.sessionVariables = {
     EDITOR = "nvim";
   };
