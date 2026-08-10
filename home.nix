@@ -16,6 +16,7 @@
     fzf
     jq
     lazygit
+    bat
   ];
 
   home.file.".pi/agent/settings.json".source =
@@ -89,5 +90,16 @@
     initContent = ''
         source "${dotfilesDirectory}/home/.zshrc"
     '';
+  };
+
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    icons = "auto";
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
   };
 }

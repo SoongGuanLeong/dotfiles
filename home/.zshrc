@@ -111,7 +111,3 @@ export NVM_DIR="$HOME/.nvm"
 export BROWSER=wslview
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-eval "$(zoxide init zsh)"
-alias ls="eza --icons"
-alias bat="batcat"
-alias fd="fdfind"
