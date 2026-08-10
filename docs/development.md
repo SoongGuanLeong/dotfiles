@@ -244,9 +244,9 @@ Dependency updates should be intentional rather than automatic.
 The preferred workflow is:
 
 ```bash
-./scripts/check-security.sh
+./scripts/check.sh
 nix flake update
-./scripts/check-security.sh
+./scripts/check.sh
 ./scripts/rebuild.sh
 git diff -- flake.lock
 ```
