@@ -35,7 +35,7 @@ cd dotfiles
 Run:
 
 ```bash
-./scripts/rebuild.sh
+./scripts/bootstrap.sh
 ```
 
 The script:
@@ -163,7 +163,7 @@ Normal rebuilds do **not** update dependencies.
 Before updating:
 
 ```bash
-./scripts/check-security.sh
+./scripts/check.sh
 ```
 
 The repository uses a 14-day cooling period for new nixpkgs revisions.
@@ -172,7 +172,7 @@ When an update becomes eligible:
 
 ```bash
 nix flake update
-./scripts/check-security.sh
+./scripts/check.sh
 ./scripts/rebuild.sh
 ```
 
