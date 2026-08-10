@@ -17,6 +17,7 @@
     jq
     lazygit
     bat
+    uv
   ];
 
   home.file.".pi/agent/settings.json".source =
