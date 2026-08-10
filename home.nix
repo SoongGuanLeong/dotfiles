@@ -63,7 +63,6 @@
 
   home.sessionPath = [
     "$HOME/.local/bin"
-    "$HOME/.sdkman/candidates/scala/current/bin"
   ];
 
   programs.starship = {
