@@ -9,5 +9,5 @@ export DOTFILES_DIRECTORY
 
 ln -sfn "$DOTFILES_DIRECTORY" "$HOME/.dotfiles"
 
-exec nix run github:nix-community/home-manager/release-26.05 -- \
+exec nix run "$DOTFILES_DIRECTORY#home-manager" -- \
   switch --flake "$DOTFILES_DIRECTORY#default" --impure
