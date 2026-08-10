@@ -14,6 +14,9 @@ bash -n scripts/*.sh
 printf '%s\n' '=== Nix syntax ==='
 nix-instantiate --parse home.nix >/dev/null
 
+printf '%s\n' '=== Flake check ==='
+nix flake check --impure
+
 printf '%s\n' '=== Security audit ==='
 ./scripts/check-security.sh
 
