@@ -5,7 +5,8 @@
   "defaultThinkingLevel": "high",
   "lastChangelogVersion": "0.84.1",
   "packages": [
-    "../../.dotfiles/home/.pi/agent/extensions/calm/index.ts"
+    "../../.dotfiles/home/.pi/agent/extensions/calm/index.ts",
+    "npm:pi-web-access@0.14.0"
   ],
   "images": {
     "blockImages": false
