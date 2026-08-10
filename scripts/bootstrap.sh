@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOTFILES_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/lib.sh"
 
-die() {
-  printf 'error: %s\n' "$*" >&2
-  exit 1
-}
+DOTFILES_DIRECTORY="$(dotfiles_directory)"
 
 command -v git >/dev/null 2>&1 ||
   die "git is required"
@@ -16,17 +13,6 @@ command -v nix >/dev/null 2>&1 ||
 
 nix flake metadata "$DOTFILES_DIRECTORY" >/dev/null 2>&1 ||
   die "Nix flakes are not available. Enable flakes before running bootstrap.sh."
-
-if [[ -e "$HOME/.dotfiles" && ! -L "$HOME/.dotfiles" ]]; then
-  die "$HOME/.dotfiles exists and is not a symlink; refusing to overwrite it"
-fi
-
-if [[ -L "$HOME/.dotfiles" ]]; then
-  current_target="$(readlink -f "$HOME/.dotfiles")"
-  if [[ "$current_target" != "$DOTFILES_DIRECTORY" ]]; then
-    die "$HOME/.dotfiles points to $current_target"
-  fi
-fi
 
 printf 'Bootstrapping dotfiles from %s\n' "$DOTFILES_DIRECTORY"
 

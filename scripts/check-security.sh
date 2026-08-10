@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOTFILES_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-MIN_NIXPKGS_AGE_DAYS=14
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/lib.sh"
 
 export DOTFILES_USERNAME="${USER:?USER is not set}"
 export DOTFILES_HOME="${HOME:?HOME is not set}"
-export DOTFILES_DIRECTORY
-
-die() {
-  printf 'error: %s\n' "$*" >&2
-  exit 1
-}
+export DOTFILES_DIRECTORY="$(dotfiles_directory)"
+MIN_NIXPKGS_AGE_DAYS=14
 
 command -v nix >/dev/null 2>&1 ||
   die "Nix is required"
