@@ -30,4 +30,6 @@ fi
 
 printf 'Bootstrapping dotfiles from %s\n' "$DOTFILES_DIRECTORY"
 
+"$DOTFILES_DIRECTORY/scripts/check.sh"
+
 exec "$DOTFILES_DIRECTORY/scripts/rebuild.sh"
