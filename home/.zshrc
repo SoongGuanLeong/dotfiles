@@ -107,12 +107,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# opencode
-export PATH="$HOME/.opencode/bin:$PATH"
 
 export BROWSER="/mnt/c/Program Files/Microsoft/Edge/Application/msedge.exe"
 export BROWSER=wslview
-export OBSIDIAN_VAULT_PATH="/mnt/e/Desktop/databricks"
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 eval "$(zoxide init zsh)"

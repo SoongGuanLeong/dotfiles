@@ -54,9 +54,6 @@
     config.lib.file.mkOutOfStoreSymlink
     "${dotfilesDirectory}/home/AGENTS.md";
 
-  home.file.".config/opencode/AGENTS.md".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/AGENTS.md";
 
   home.sessionVariables = {
     EDITOR = "nvim";
