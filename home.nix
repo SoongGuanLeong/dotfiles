@@ -16,7 +16,6 @@
     fzf
     jq
     lazygit
-    nodejs
   ];
 
   home.file.".pi/agent/settings.json".source =

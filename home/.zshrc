@@ -103,16 +103,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-export PATH="$HOME/.npm-global/bin:$PATH"
-
 source ~/.env_paths
-
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -121,12 +112,6 @@ export NVM_DIR="$HOME/.nvm"
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
-# fnm
-FNM_PATH="$HOME/.local/share/fnm"
-if [ -d "$FNM_PATH" ]; then
-  export PATH="$FNM_PATH:$PATH"
-  eval "$(fnm env --shell zsh)"
-fi
 export BROWSER="/mnt/c/Program Files/Microsoft/Edge/Application/msedge.exe"
 export BROWSER=wslview
 export OBSIDIAN_VAULT_PATH="/mnt/e/Desktop/databricks"
