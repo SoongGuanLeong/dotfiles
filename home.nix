@@ -58,9 +58,14 @@
     config.lib.file.mkOutOfStoreSymlink
     "${dotfilesDirectory}/home/AGENTS.md";
 
-home.sessionVariables = {
+  home.sessionVariables = {
     EDITOR = "nvim";
   };
+
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "$HOME/.sdkman/candidates/scala/current/bin"
+  ];
 
   programs.starship = {
     enable = true;
