@@ -27,13 +27,9 @@
     config.lib.file.mkOutOfStoreSymlink
     "${dotfilesDirectory}/home/.pi/agent/themes";
 
-  home.file.".pi/agent/extensions/terminal-status-title.js".source =
+  home.file.".pi/agent/extensions".source =
     config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.pi/agent/extensions/terminal-status-title.js";
-
-  home.file.".pi/agent/extensions/calm".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.pi/agent/extensions/calm";
+    "${dotfilesDirectory}/home/.pi/agent/extensions";
 
   home.file.".pi/agent/models.json".source =
     config.lib.file.mkOutOfStoreSymlink
