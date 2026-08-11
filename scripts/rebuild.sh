@@ -3,9 +3,7 @@ set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/lib.sh"
 
-export DOTFILES_USERNAME="$USER"
-export DOTFILES_HOME="$HOME"
-export DOTFILES_DIRECTORY="$(dotfiles_directory)"
+export_dotfiles_env_vars
 
 ensure_dotfiles_symlink
 
