@@ -1,6 +1,33 @@
 { config, pkgs, username, homeDirectory, dotfilesDirectory, ... }:
 
-{
+let
+  # Single mapping list for symlinked files: target path on the left-hand
+  # side, source path relative to the dotfiles directory on the right.
+  #
+  # Fan-out: home/AGENTS.md is symlinked to two coding-tool instruction
+  # targets (.claude/CLAUDE.md and .codex/AGENTS.md) deliberately, so it is
+  # listed here twice with the same source.
+  symlinks = [
+    { target = ".pi/agent/settings.json"; source = "home/.pi/agent/settings.json"; }
+    { target = ".pi/agent/themes"; source = "home/.pi/agent/themes"; }
+    { target = ".pi/agent/extensions"; source = "home/.pi/agent/extensions"; }
+    { target = ".pi/agent/models.json"; source = "home/.pi/agent/models.json"; }
+    { target = ".config/nvim"; source = "home/.config/nvim"; }
+    { target = ".config/herdr"; source = "home/.config/herdr"; }
+    { target = ".config/wezterm/wezterm.lua"; source = "home/.config/wezterm/wezterm.lua"; }
+    { target = ".claude/CLAUDE.md"; source = "home/AGENTS.md"; }
+    { target = ".codex/AGENTS.md"; source = "home/AGENTS.md"; }
+  ];
+
+  toSymlink = { target, source }:
+    {
+      name = target;
+      value = {
+        source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDirectory}/${source}";
+      };
+    };
+
+in {
   home.username = username;
   home.homeDirectory = homeDirectory;
 
@@ -20,42 +47,7 @@
     uv
   ];
 
-  home.file.".pi/agent/settings.json".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.pi/agent/settings.json";
-
-  home.file.".pi/agent/themes".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.pi/agent/themes";
-
-  home.file.".pi/agent/extensions".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.pi/agent/extensions";
-
-  home.file.".pi/agent/models.json".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.pi/agent/models.json";
-
-  home.file.".config/nvim".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.config/nvim";
-
-  home.file.".config/herdr".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.config/herdr";
-
-  home.file.".config/wezterm/wezterm.lua".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/.config/wezterm/wezterm.lua";
-
-  home.file.".claude/CLAUDE.md".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/AGENTS.md";
-
-  home.file.".codex/AGENTS.md".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${dotfilesDirectory}/home/AGENTS.md";
-
+  home.file = builtins.listToAttrs (map toSymlink symlinks);
 
   home.sessionVariables = {
     EDITOR = "nvim";
