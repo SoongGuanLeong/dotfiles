@@ -13,9 +13,11 @@ Requirements:
 ```bash
 git clone <YOUR_REPOSITORY_URL> ~/projects/dotfiles
 cd ~/projects/dotfiles
-./scripts/rebuild.sh
+./scripts/bootstrap.sh
 exec zsh -l
 ```
+
+For daily iteration after changing dotfiles, use `./scripts/rebuild.sh`.
 
 ## Documentation
 
