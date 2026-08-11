@@ -13,6 +13,14 @@ dotfiles_directory() {
   printf '%s\n' "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 }
 
+# Export the DOTFILES_* environment variables that direct flake evaluation
+# requires, deriving them from the current shell session.
+export_dotfiles_env_vars() {
+  export DOTFILES_USERNAME="$USER"
+  export DOTFILES_HOME="$HOME"
+  export DOTFILES_DIRECTORY="$(dotfiles_directory)"
+}
+
 # Print an error message to stderr and exit with status 1.
 die() {
   printf 'error: %s\n' "$*" >&2
