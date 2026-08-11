@@ -38,12 +38,19 @@ Run:
 ./scripts/bootstrap.sh
 ```
 
+### Precondition: `~/.dotfiles`
+
+Validation requires `~/.dotfiles` to be a symlink pointing at this
+repository. `bootstrap.sh` creates the symlink on first run and refuses to
+repoint an existing symlink that targets somewhere else.
+
 The script:
 
 1. Determines the repository location.
-2. Exports the environment variables required by the flake.
-3. Maintains `~/.dotfiles` as a convenience symlink.
-4. Activates Home Manager using the pinned flake inputs.
+2. Ensures `~/.dotfiles` points at this repository, creating the symlink on first bootstrap.
+3. Exports the environment variables required by the flake.
+4. Validates the repository, including the `~/.dotfiles` precondition.
+5. Activates Home Manager using the pinned flake inputs.
 
 Start a fresh shell afterward:
 

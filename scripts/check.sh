@@ -5,6 +5,9 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/lib.sh"
 
 export_dotfiles_env_vars
 
+printf '%s\n' '=== Dotfiles symlink ==='
+require_dotfiles_symlink
+
 cd "$DOTFILES_DIRECTORY"
 
 printf '%s\n' '=== Git diff check ==='

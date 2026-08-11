@@ -14,6 +14,11 @@ command -v nix >/dev/null 2>&1 ||
 nix flake metadata "$DOTFILES_DIRECTORY" >/dev/null 2>&1 ||
   die "Nix flakes are not available. Enable flakes before running bootstrap.sh."
 
+# check.sh requires ~/.dotfiles to point at this repository, so establish
+# the symlink before validating. Refuse to repoint an existing symlink.
+ensure_dotfiles_symlink
+ln -sfn "$DOTFILES_DIRECTORY" "$HOME/.dotfiles"
+
 printf 'Bootstrapping dotfiles from %s\n' "$DOTFILES_DIRECTORY"
 
 "$DOTFILES_DIRECTORY/scripts/check.sh"

@@ -27,19 +27,41 @@ die() {
   exit 1
 }
 
-# Refuse to run when ~/.dotfiles exists as a regular file or points at a
-# different repository root. If ~/.dotfiles is missing or already points
-# at this repository, do nothing.
-ensure_dotfiles_symlink() {
+# Print nothing when ~/.dotfiles is safe (missing, or a symlink to this
+# repository root); otherwise print a description of the problem.
+dotfiles_symlink_problem() {
   if [[ -e "$HOME/.dotfiles" && ! -L "$HOME/.dotfiles" ]]; then
-    die "$HOME/.dotfiles exists and is not a symlink; refusing to overwrite it"
+    printf '%s\n' "$HOME/.dotfiles exists and is not a symlink; refusing to overwrite it"
+    return
   fi
 
   if [[ -L "$HOME/.dotfiles" ]]; then
     local current_target
     current_target="$(readlink -f "$HOME/.dotfiles")"
     if [[ "$current_target" != "$(dotfiles_directory)" ]]; then
-      die "$HOME/.dotfiles points to $current_target"
+      printf '%s\n' "$HOME/.dotfiles points to $current_target"
     fi
+  fi
+}
+
+# Refuse to run when ~/.dotfiles exists as a regular file or points at a
+# different repository root. If ~/.dotfiles is missing or already points
+# at this repository, do nothing.
+ensure_dotfiles_symlink() {
+  local problem
+  problem="$(dotfiles_symlink_problem)"
+  [[ -z "$problem" ]] || die "$problem"
+}
+
+# Refuse to run when ~/.dotfiles is missing, exists as a regular file, or
+# points at a different repository root. This is the strict validation
+# variant used by check.sh: the symlink must already point at this repo.
+require_dotfiles_symlink() {
+  local problem
+  problem="$(dotfiles_symlink_problem)"
+  [[ -z "$problem" ]] || die "$problem"
+
+  if [[ ! -L "$HOME/.dotfiles" ]]; then
+    die "$HOME/.dotfiles is missing; expected a symlink to $(dotfiles_directory)"
   fi
 }
