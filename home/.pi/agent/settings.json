@@ -1,8 +1,5 @@
 {
   "theme": "rose-pine-moon",
-  "defaultProvider": "opencode",
-  "defaultModel": "deepseek-v4-flash-free",
-  "defaultThinkingLevel": "high",
   "lastChangelogVersion": "0.84.1",
   "packages": [
     "npm:pi-web-access@0.14.0",
