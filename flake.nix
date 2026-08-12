@@ -20,6 +20,10 @@
         "DOTFILES_DIRECTORY"
       ];
 
+      # Expose required env vars for consumers (scripts).
+      # Used by scripts/lib.sh to enforce the contract centrally.
+      requiredEnvVarsJSON = pkgs.writeText "requiredEnvVars.json" (builtins.toJSON requiredEnvVars);
+
       # builtins.getEnv returns "" for both unset and empty variables, so
       # an empty string is treated as missing.
       missingEnvVars = builtins.filter
@@ -34,7 +38,10 @@
           ("missing required DOTFILES_* environment variable(s): "
             + builtins.concatStringsSep ", " missingEnvVars);
     in {
-      packages.${system}.home-manager = home-manager.packages.${system}.default;
+      packages.${system} = {
+        home-manager = home-manager.packages.${system}.default;
+        requiredEnvVars = requiredEnvVarsJSON;
+      };
 
       homeConfigurations.default = assert requiredEnvVarsSet;
         home-manager.lib.homeManagerConfiguration {

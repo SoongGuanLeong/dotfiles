@@ -11,7 +11,6 @@ let
     { target = ".pi/agent/settings.json"; source = "home/.pi/agent/settings.json"; }
     { target = ".pi/agent/themes"; source = "home/.pi/agent/themes"; }
     { target = ".pi/agent/extensions"; source = "home/.pi/agent/extensions"; }
-    { target = ".pi/agent/models.json"; source = "home/.pi/agent/models.json"; }
     { target = ".config/nvim"; source = "home/.config/nvim"; }
     { target = ".config/herdr"; source = "home/.config/herdr"; }
     { target = ".config/wezterm/wezterm.lua"; source = "home/.config/wezterm/wezterm.lua"; }

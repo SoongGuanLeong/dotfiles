@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "2af98e52-fb29-45f0-845c-1211d580e491",
+  "title": "const task = `Review the following investigation results for ticket #9 in the dotfiles repo.",
+  "objective": "const task = `Review the following investigation results for ticket #9 in the dotfiles repo.",
+  "status": "failed",
+  "createdAt": "2026-08-12T07:11:27.844Z",
+  "updatedAt": "2026-08-12T07:11:27.925Z",
+  "runs": [
+    {
+      "runId": "a9a83596-84a1-4d8e-ae02-79344c5ebd64",
+      "mode": "workflow",
+      "asyncDir": "/tmp/pi-subagents-uid-1000/async-subagent-runs/a9a83596-84a1-4d8e-ae02-79344c5ebd64",
+      "status": "failed",
+      "startedAt": "2026-08-12T07:11:27.851Z",
+      "completedAt": "2026-08-12T07:11:27.924Z"
+    }
+  ],
+  "workflowChildren": [],
+  "decisions": [],
+  "artifacts": [
+    {
+      "kind": "status",
+      "path": "/tmp/pi-subagents-uid-1000/async-subagent-runs/a9a83596-84a1-4d8e-ae02-79344c5ebd64/status.json"
+    },
+    {
+      "kind": "other",
+      "path": "/tmp/pi-subagents-uid-1000/async-subagent-runs/a9a83596-84a1-4d8e-ae02-79344c5ebd64/events.jsonl",
+      "description": "Lifecycle events"
+    }
+  ],
+  "receipts": [],
+  "cwd": "/home/weeboppa/projects/dotfiles",
+  "ownerSessionId": "/home/weeboppa/.pi/agent/sessions/--home-weeboppa-projects-dotfiles--/2026-08-12T07-07-38-465Z_019ff4cc-5061-77aa-8841-eb938d5fe47f.jsonl",
+  "summary": "workflowScript must be valid JavaScript.\nIf task text contains Markdown fences or backticks, use an array joined with \"\\n\" or escaped strings instead of a raw backtick template literal.\n\nOriginal SyntaxError:\nworkflow-script.js:5\n1. `ls -R`\n    ^^\n\nSyntaxError: Unexpected identifier 'ls'\n    at new Script (node:vm:117:7)\n    at MessagePort.<anonymous> ([worker eval]:298:18)\n    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)\n    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)"
+}

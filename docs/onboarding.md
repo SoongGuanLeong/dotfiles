@@ -42,8 +42,7 @@ The script:
 
 1. Determines the repository location.
 2. Exports the environment variables required by the flake.
-3. Maintains `~/.dotfiles` as a convenience symlink.
-4. Activates Home Manager using the pinned flake inputs.
+3. Activates Home Manager using the pinned flake inputs.
 
 Start a fresh shell afterward:
 
