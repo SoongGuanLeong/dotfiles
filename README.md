@@ -11,7 +11,7 @@ Requirements:
 * Git
 
 ```bash
-git clone <YOUR_REPOSITORY_URL> ~/projects/dotfiles
+git clone https://github.com/SoongGuanLeong/dotfiles.git ~/projects/dotfiles
 cd ~/projects/dotfiles
 ./scripts/bootstrap.sh
 exec zsh -l
