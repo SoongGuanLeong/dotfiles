@@ -4,7 +4,9 @@
   "packages": [
     "npm:pi-web-access@0.14.0",
     "npm:@ryan_nookpi/pi-extension-codex-fast-mode@0.2.6",
-    "git:github.com/algal/pi-openai-server-compaction@c6d593087709e9481223dc6c6c2269b371b5e055"
+    "git:github.com/algal/pi-openai-server-compaction@c6d593087709e9481223dc6c6c2269b371b5e055",
+    "npm:omniroute-pi-ext-integration",
+    "npm:pi-subagents"
   ],
   "images": {
     "blockImages": false
@@ -16,5 +18,8 @@
   "quietStartup": true,
   "steeringMode": "all",
   "followUpMode": "all",
-  "collapseChangelog": true
+  "collapseChangelog": true,
+  "defaultProvider": "omni",
+  "defaultModel": "auto/best-coding",
+  "defaultThinkingLevel": "medium"
 }
