@@ -7,5 +7,4 @@
   { "target": ".config/wezterm/wezterm.lua", "source": "home/.config/wezterm/wezterm.lua" },
   { "target": ".claude/CLAUDE.md", "source": "home/AGENTS.md" },
   { "target": ".codex/AGENTS.md", "source": "home/AGENTS.md" },
-  { "target": "none", "source": "home/.zshrc" }
 ]

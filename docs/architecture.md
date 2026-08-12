@@ -152,6 +152,16 @@ Each piece of configuration should have one clear owner.
 
 Avoid having multiple systems manage the same resource.
 
+### Zsh init fragment merge order
+
+Home Manager assembles the final `~/.zshrc` by concatenating fragments in this order:
+
+1. **Home Manager preamble** — autosuggestion, syntax highlighting, and other `programs.zsh` enable flags.
+2. **`programs.zsh.initContent`** — user-defined content (`home.nix`). This contains oh-my-zsh bootstrap, NVM init, SDKMAN init, and `BROWSER` export.
+3. **Zsh integrations** — `eza.enableZshIntegration` and `zoxide.enableZshIntegration` append their init lines after `initContent`.
+
+Starship is initialised separately via `programs.starship.enable` and does not appear in the zsh fragment chain.
+
 ## Repository state vs runtime state
 
 The repository contains configuration and reproducible declarations.

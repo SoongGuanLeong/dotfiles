@@ -20,6 +20,6 @@
   "followUpMode": "all",
   "collapseChangelog": true,
   "defaultProvider": "omni",
-  "defaultModel": "auto/best-coding",
+  "defaultModel": "auto/best-free",
   "defaultThinkingLevel": "medium"
 }
