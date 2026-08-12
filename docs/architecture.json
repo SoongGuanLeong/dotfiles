@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Dotfiles Architecture",
+    "quality_profile": "showcase",
+    "viewBox": [1200, 560],
+    "views": [
+      {
+        "id": "build-flow",
+        "label": "Build and deploy flow",
+        "focus": ["bootstrap", "flake", "home-manager", "home-config", "user-env"],
+        "note": "From bootstrap script through Nix evaluation to a configured user shell."
+      },
+      {
+        "id": "registry-pipeline",
+        "label": "Registry pipeline",
+        "focus": ["registry", "skip-list", "check-script", "flake"],
+        "note": "Registry defines symlinks; check-registry validates them against skip-list; Nix check runs it in CI."
+      },
+      {
+        "id": "managed-dotfiles",
+        "label": "Managed dotfiles",
+        "focus": ["nvim", "herdr", "wezterm", "pi-agent", "agents-md"],
+        "note": "Configuration for each tool managed as a Home Manager symlink target."
+      }
+    ]
+  },
+  "components": [
+    { "id": "bootstrap", "type": "external", "label": "Bootstrap Scripts", "sublabel": "scripts/bootstrap.sh, rebuild.sh", "pos": [40, 40], "size": [180, 60], "tag": "sets DOTFILES_* env" },
+    { "id": "flake", "type": "backend", "label": "Nix Flake", "sublabel": "flake.nix", "pos": [260, 40], "size": [180, 60], "tag": "pins nixpkgs + hm" },
+    { "id": "home-manager", "type": "cloud", "label": "Home Manager", "sublabel": "nix-community/hm release-26.05", "pos": [480, 40], "size": [180, 60] },
+    { "id": "home-config", "type": "backend", "label": "Home Config", "sublabel": "home.nix", "pos": [700, 40], "size": [180, 60] },
+    { "id": "user-env", "type": "frontend", "label": "User Environment", "sublabel": "Zsh + Starship + Tools", "pos": [920, 40], "size": [180, 60], "tag": "neovim, git, rg, fd, uv" },
+    { "id": "registry", "type": "database", "label": "Symlink Registry", "sublabel": "registry.json", "pos": [260, 170], "size": [140, 50] },
+    { "id": "skip-list", "type": "database", "label": "Skip List", "sublabel": "skip-list.json", "pos": [440, 170], "size": [120, 50] },
+    { "id": "check-script", "type": "security", "label": "Registry Check", "sublabel": "check-registry.sh", "pos": [600, 170], "size": [140, 50], "tag": "CI validation" },
+    { "id": "nvim", "type": "frontend", "label": "Neovim", "sublabel": "home/.config/nvim/", "pos": [40, 300], "size": [160, 60], "tag": "LazyVim" },
+    { "id": "herdr", "type": "frontend", "label": "Herdr", "sublabel": "home/.config/herdr/", "pos": [230, 300], "size": [160, 60], "tag": "terminal mux" },
+    { "id": "wezterm", "type": "frontend", "label": "WezTerm", "sublabel": "home/.config/wezterm/", "pos": [420, 300], "size": [160, 60], "tag": "terminal emu" },
+    { "id": "pi-agent", "type": "backend", "label": "pi Agent", "sublabel": "home/.pi/agent/", "pos": [610, 300], "size": [160, 60], "tag": "settings + extensions + themes" },
+    { "id": "agents-md", "type": "external", "label": "AGENTS.md", "sublabel": "home/AGENTS.md", "pos": [800, 300], "size": [160, 60], "tag": "→ .claude + .codex" },
+    { "id": "docs", "type": "external", "label": "Documentation", "sublabel": "docs/", "pos": [40, 420], "size": [160, 60], "tag": "onboarding, arch, dev, tshoot" },
+    { "id": "optional-tools", "type": "messagebus", "label": "Optional Runtimes", "sublabel": "nvm, sdkman", "pos": [920, 420], "size": [160, 60], "tag": "opt-in via zsh init" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Nix Ecosystem", "wraps": ["flake", "home-manager", "home-config", "registry", "skip-list", "check-script"] },
+    { "kind": "region", "label": "Managed Dotfiles (home/)", "wraps": ["nvim", "herdr", "wezterm", "pi-agent", "agents-md"] },
+    { "kind": "security-group", "label": "Env Contract", "wraps": ["bootstrap", "flake"] }
+  ],
+  "connections": [
+    { "id": "bt-to-flake", "from": "bootstrap", "to": "flake", "label": "DOTFILES_* env", "variant": "emphasis", "labelDy": 54 },
+    { "id": "flake-to-hm", "from": "flake", "to": "home-manager", "label": "import hm", "labelDy": 54 },
+    { "id": "hm-to-config", "from": "home-manager", "to": "home-config", "label": "homeManagerConfiguration", "labelDy": 54 },
+    { "id": "config-to-env", "from": "home-config", "to": "user-env", "label": "installs / configures", "variant": "emphasis", "labelDy": 54 },
+    { "id": "skip-to-check", "from": "skip-list", "to": "check-script", "label": "excludes", "labelDy": -19 },
+    { "id": "config-to-nvim", "from": "home-config", "to": "nvim", "label": "mkOutOfStoreSymlink", "variant": "dashed", "fromSide": "bottom", "via": [[790, 100], [790, 250], [120, 250], [120, 300]], "toSide": "top", "labelSegment": 2, "labelDy": -6 },
+    { "id": "config-to-herdr", "from": "home-config", "to": "herdr", "variant": "dashed", "fromSide": "bottom", "via": [[790, 100], [790, 250], [310, 250], [310, 300]], "toSide": "top" },
+    { "id": "config-to-wezterm", "from": "home-config", "to": "wezterm", "variant": "dashed", "fromSide": "bottom", "via": [[790, 100], [790, 250], [500, 250], [500, 300]], "toSide": "top" },
+    { "id": "config-to-pi", "from": "home-config", "to": "pi-agent", "variant": "dashed", "fromSide": "bottom", "via": [[790, 100], [790, 250], [690, 250], [690, 300]], "toSide": "top" },
+    { "id": "config-to-agents", "from": "home-config", "to": "agents-md", "label": "multi-target", "variant": "dashed", "fromSide": "bottom", "via": [[790, 100], [790, 250], [880, 250], [880, 300]], "toSide": "top", "labelSegment": 2, "labelDy": -6 },
+    { "id": "config-to-optional", "from": "home-config", "to": "optional-tools", "label": "zsh init conditional", "variant": "dashed", "fromSide": "bottom", "via": [[790, 100], [790, 250], [1000, 250], [1000, 420]], "toSide": "top", "labelSegment": 2, "labelDy": -12 },
+    { "id": "config-to-docs", "from": "home-config", "to": "docs", "variant": "dashed", "fromSide": "bottom", "via": [[790, 100], [790, 370], [120, 370], [120, 420]], "toSide": "top" }
+  ],
+  "cards": [
+    { "dot": "violet", "title": "Entry", "items": ["Bootstrap scripts set DOTFILES_USERNAME, DOTFILES_HOME, DOTFILES_DIRECTORY", "Flake validates required env vars before evaluation", "Home Manager release-26.05 provides the module system"] },
+    { "dot": "emerald", "title": "Registry", "items": ["registry.json declares 8 symlink pairs (target → source)", "skip-list.json excludes files from check-registry validation", "nix flake check runs check-registry.sh in a sandbox"] },
+    { "dot": "cyan", "title": "Managed Config", "items": ["Neovim LazyVim with custom plugins (colorscheme, git, navigation, UI)", "Herdr terminal multiplexer with session persistence", "WezTerm Lua config", "pi agent extensions, themes, and settings"] },
+    { "dot": "rose", "title": "User Runtime", "items": ["Zsh with starship prompt, eza, zoxide, autosuggestion, syntax-highlighting", "Optional: nvm (Node.js), sdkman (Java/Scala) loaded in zsh init", "Tools: neovim, git, ripgrep, fd, fzf, jq, lazygit, bat, uv"] }
+  ]
+}

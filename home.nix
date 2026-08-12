@@ -29,6 +29,7 @@ in {
     lazygit
     bat
     uv
+    chromium
   ];
 
   home.file = builtins.listToAttrs (map toSymlink symlinks);
