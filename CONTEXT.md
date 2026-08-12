@@ -28,3 +28,5 @@ See [docs/adr/](docs/adr/).
 |---|---|---|
 | 001 | Remove `~/.dotfiles` symlink | Accepted |
 | 002 | Herdr Extension Seam | Accepted |
+| 003 | Optional Runtimes Policy | Accepted |
+| 004 | Dependency Update Cooling Period | Accepted |
