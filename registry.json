@@ -1,10 +1,19 @@
 [
-  { "target": ".pi/agent/settings.json", "source": "home/.pi/agent/settings.json" },
+  {
+    "target": ".pi/agent/settings.json",
+    "source": "home/.pi/agent/settings.json"
+  },
   { "target": ".pi/agent/themes", "source": "home/.pi/agent/themes" },
   { "target": ".pi/agent/extensions", "source": "home/.pi/agent/extensions" },
   { "target": ".config/nvim", "source": "home/.config/nvim" },
-  { "target": ".config/herdr", "source": "home/.config/herdr" },
-  { "target": ".config/wezterm/wezterm.lua", "source": "home/.config/wezterm/wezterm.lua" },
+  {
+    "target": ".config/herdr/config.toml",
+    "source": "home/.config/herdr/config.toml"
+  },
+  {
+    "target": ".config/wezterm/wezterm.lua",
+    "source": "home/.config/wezterm/wezterm.lua"
+  },
   { "target": ".claude/CLAUDE.md", "source": "home/AGENTS.md" },
   { "target": ".codex/AGENTS.md", "source": "home/AGENTS.md" }
 ]
