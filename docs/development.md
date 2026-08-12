@@ -66,22 +66,31 @@ Then rebuild:
 
 ## Changing shell configuration
 
-Shell-specific configuration lives in:
+Zsh init content is managed via `programs.zsh.initContent` in `home.nix`.
 
-```text
-home/.zshrc
+Home Manager assembles `~/.zshrc` from fragments. See the [Zsh init fragment merge order](architecture.md#zsh-init-fragment-merge-order) section in `architecture.md` for how `initContent` fits into the final file.
+
+After editing `programs.zsh.initContent`:
+
+Validate Nix syntax:
+
+```bash
+nix-instantiate --parse home.nix >/dev/null
 ```
 
-The file is sourced by the Home Manager-managed Zsh configuration.
-
-After modifying it:
+Then rebuild:
 
 ```bash
 ./scripts/rebuild.sh
+```
+
+Then verify the shell starts cleanly:
+
+```bash
 exec zsh -l
 ```
 
-Then verify the relevant commands or environment variables.
+Check expected environment variables or shell behavior.
 
 ## Adding development runtimes
 
@@ -237,6 +246,8 @@ git diff -- flake.lock
 ```
 
 If the new revision has not passed the repository's cooling period (defined in `scripts/check-security.sh`), do not force the update simply because a newer revision exists.
+
+If the security check reports known vulnerabilities, stop and investigate before committing.
 
 ## Maintainer principle
 
