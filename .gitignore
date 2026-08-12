@@ -4,5 +4,11 @@ result
 
 home/.config/herdr/.plugins.lock
 home/.config/herdr/*.log
-home/.config/herdr/session.json
-home/.config/herdr/*.sock
+
+# pi agent artifacts/missions
+.pi/subagents/artifacts/
+.pi/subagents/missions/
+
+# generated text files
+all_files.txt
+covered_sources.txt

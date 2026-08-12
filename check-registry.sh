@@ -10,12 +10,12 @@ skip_list=$(jq -r '.[]' skip-list.json)
 
 for file in $files; do
   # Check if the file is explicitly in the registry
-  if echo "$registry" | grep -q "^$file$"; then
+  if echo "$registry" | grep -Fxq "$file"; then
     continue
   fi
 
   # Check if the file is in the skip list
-  if echo "$skip_list" | grep -q "^$file$"; then
+  if echo "$skip_list" | grep -Fxq "$file"; then
     continue
   fi
 
