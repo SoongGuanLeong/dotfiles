@@ -41,6 +41,7 @@
       packages.${system} = {
         home-manager = home-manager.packages.${system}.default;
         requiredEnvVars = requiredEnvVarsJSON;
+        nixpkgsMinAgeDays = pkgs.writeText "nixpkgs-min-age-days" "14";
       };
 
       checks.${system}.registry = pkgs.runCommand "registry-check" { buildInputs = [ pkgs.jq ]; } ''

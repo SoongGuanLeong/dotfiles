@@ -26,7 +26,8 @@ check_dotfiles_env_vars() {
   local root_dir
   root_dir="$(dotfiles_directory)"
   local required_vars
-  required_vars=$(nix eval --raw "$root_dir#packages.$(uname -m)-linux.requiredEnvVars" | jq -r '.[]' 2>/dev/null || cat result | jq -r '.[]')
+  required_vars_file=$(nix eval --raw "$root_dir#packages.$(uname -m)-linux.requiredEnvVars")
+  required_vars=$(cat "$required_vars_file" | jq -r '.[]')
 
   for var in $required_vars; do
     if [[ -z "${!var:-}" ]]; then

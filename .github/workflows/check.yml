@@ -1,0 +1,20 @@
+name: "Check"
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - name: Run check script
+        run: ./scripts/check.sh
+        env:
+          DOTFILES_USERNAME: runner
+          DOTFILES_HOME: /home/runner
+          DOTFILES_DIRECTORY: ${{ github.workspace }}

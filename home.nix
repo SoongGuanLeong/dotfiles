@@ -64,14 +64,20 @@ in {
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
+    shellAliases = {
+      g = "git";
+      ga = "git add";
+      gb = "git branch";
+      gc = "git commit";
+      gco = "git checkout";
+      gd = "git diff";
+      gf = "git fetch";
+      gl = "git pull";
+      gp = "git push";
+      gst = "git status";
+    };
+
     initContent = ''
-      export ZSH="$HOME/.oh-my-zsh"
-
-      ZSH_THEME=""
-      plugins=(git)
-
-      source "$ZSH/oh-my-zsh.sh"
-
       # Optional: Node.js via NVM.
       export NVM_DIR="$HOME/.nvm"
       if [[ -s "$NVM_DIR/nvm.sh" ]]; then

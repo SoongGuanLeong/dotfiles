@@ -4,7 +4,8 @@ set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/lib.sh"
 
 export_dotfiles_env_vars
-MIN_NIXPKGS_AGE_DAYS=14
+min_nixpkgs_age_days_path="$(nix eval --raw '.#packages.x86_64-linux.nixpkgsMinAgeDays')"
+MIN_NIXPKGS_AGE_DAYS="$(cat "$min_nixpkgs_age_days_path")"
 
 command -v nix >/dev/null 2>&1 ||
   die "Nix is required"
