@@ -142,7 +142,7 @@ Each piece of configuration should have one clear owner.
 | Resource              | Owner                              |
 | --------------------- | ---------------------------------- |
 | Base packages         | Nix / Home Manager                 |
-| Zsh configuration     | Home Manager + repository `.zshrc` |
+| Zsh configuration     | Home Manager (fully managed via Nix) |
 | Python                | uv                                 |
 | Node.js               | NVM                                |
 | Java / Scala          | SDKMAN                             |
