@@ -43,10 +43,10 @@ Check the Nix configuration syntax:
 nix-instantiate --parse home.nix >/dev/null
 ```
 
-Check the flake:
+Check the flake (requires `--impure` because the flake reads `DOTFILES_*` environment variables):
 
 ```bash
-nix flake check
+nix flake check --impure
 ```
 
 If the working tree is dirty, that is normally only a warning:
@@ -361,7 +361,7 @@ Status: TOO NEW FOR UPDATE
 
 this is expected when the pinned revision is younger than the configured cooling period.
 
-The repository currently uses a 14-day cooling period.
+The configured cooling period is defined in `scripts/check-security.sh`; run the script to print it.
 
 This is a policy guardrail, not an indication that the revision is malicious or vulnerable.
 
@@ -388,13 +388,7 @@ Do not simply remove the security check or suppress the package's vulnerability 
 
 ## Flake evaluation uses the wrong user or home directory
 
-The repository passes these values to the flake:
-
-```text
-DOTFILES_USERNAME
-DOTFILES_HOME
-DOTFILES_DIRECTORY
-```
+The repository passes required environment variables to the flake (the canonical list lives in `scripts/lib.sh` and is validated against the flake's `requiredEnvVars`).
 
 Check them:
 

@@ -123,13 +123,13 @@ For Nix configuration changes:
 nix-instantiate --parse home.nix >/dev/null
 ```
 
-For shell scripts:
+The automated check (`./scripts/check.sh`) runs shell syntax validation across all scripts:
 
 ```bash
-bash -n scripts/rebuild.sh
-bash -n scripts/bootstrap.sh
-bash -n scripts/check-security.sh
+bash -n scripts/*.sh
 ```
+
+Use `./scripts/check.sh` rather than manually listing individual scripts.
 
 Then perform a real rebuild:
 
@@ -168,22 +168,7 @@ A new nixpkgs revision is not automatically considered eligible for adoption.
 
 Normal development should not update the flake lock file.
 
-To deliberately update dependencies:
-
-```bash
-nix flake update
-```
-
-Then run:
-
-```bash
-./scripts/check-security.sh
-./scripts/rebuild.sh
-```
-
-Review the resulting lock-file changes carefully.
-
-If the security check reports known vulnerabilities, stop and investigate before committing.
+See [Dependency update policy](#dependency-update-policy) for the canonical update workflow.
 
 ## Checking the final diff
 
@@ -251,7 +236,7 @@ nix flake update
 git diff -- flake.lock
 ```
 
-If the new revision has not passed the repository's cooling period, do not force the update simply because a newer revision exists.
+If the new revision has not passed the repository's cooling period (defined in `scripts/check-security.sh`), do not force the update simply because a newer revision exists.
 
 ## Maintainer principle
 

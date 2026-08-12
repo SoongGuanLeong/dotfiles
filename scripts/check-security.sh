@@ -3,9 +3,7 @@ set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/lib.sh"
 
-export DOTFILES_USERNAME="${USER:?USER is not set}"
-export DOTFILES_HOME="${HOME:?HOME is not set}"
-export DOTFILES_DIRECTORY="$(dotfiles_directory)"
+export_dotfiles_env_vars
 MIN_NIXPKGS_AGE_DAYS=14
 
 command -v nix >/dev/null 2>&1 ||

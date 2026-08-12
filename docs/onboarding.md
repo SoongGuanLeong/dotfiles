@@ -137,7 +137,9 @@ A missing optional runtime is not an onboarding failure.
 
 ## 8. Daily workflow
 
-After changing dotfiles:
+After changing dotfiles, follow the [development workflow](development.md).
+
+The entry point is:
 
 ```bash
 ./scripts/rebuild.sh
@@ -159,23 +161,7 @@ git status
 
 Normal rebuilds do **not** update dependencies.
 
-Before updating:
-
-```bash
-./scripts/check.sh
-```
-
-The repository uses a 14-day cooling period for new nixpkgs revisions.
-
-When an update becomes eligible:
-
-```bash
-nix flake update
-./scripts/check.sh
-./scripts/rebuild.sh
-```
-
-Review the resulting `flake.lock` changes before committing.
+See [Dependency update policy](development.md#dependency-update-policy) for the canonical update workflow.
 
 ## 10. If something fails
 

@@ -15,8 +15,8 @@ dotfiles_directory() {
 # Export the DOTFILES_* environment variables that direct flake evaluation
 # requires, deriving them from the current shell session.
 export_dotfiles_env_vars() {
-  export DOTFILES_USERNAME="$USER"
-  export DOTFILES_HOME="$HOME"
+  export DOTFILES_USERNAME="${USER:?USER is not set}"
+  export DOTFILES_HOME="${HOME:?HOME is not set}"
   export DOTFILES_DIRECTORY="$(dotfiles_directory)"
 }
 
