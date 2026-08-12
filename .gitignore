@@ -12,3 +12,4 @@ home/.config/herdr/*.log
 # generated text files
 all_files.txt
 covered_sources.txt
+home/.config/herdr/session.json
