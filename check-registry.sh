@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/sh
 set -e
 
 # Get all files in home/
-files=$(find home -type f)
+files=$(find home -type f -o -type l)
 
 # Load registry and skip list
 registry=$(jq -r '.[].source' registry.json)
@@ -22,8 +22,9 @@ for file in $files; do
   # Check if the file is part of a directory listed in the registry
   covered=false
   for reg_source in $registry; do
+    # echo "Checking $file against $reg_source"
     if [ -d "$reg_source" ]; then
-      if [[ "$file" == "$reg_source"* ]]; then
+      if [ "${file#$reg_source}" != "$file" ]; then
         covered=true
         break
       fi
