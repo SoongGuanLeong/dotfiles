@@ -43,6 +43,16 @@
         requiredEnvVars = requiredEnvVarsJSON;
       };
 
+      checks.${system}.registry = pkgs.runCommand "registry-check" { buildInputs = [ pkgs.jq ]; } ''
+        cp ${./check-registry.sh} check-registry.sh
+        cp ${./registry.json} registry.json
+        cp ${./skip-list.json} skip-list.json
+        cp -r ${./home} home
+        chmod +x check-registry.sh
+        ./check-registry.sh
+        touch $out
+      '';
+
       homeConfigurations.default = assert requiredEnvVarsSet;
         home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
