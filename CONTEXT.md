@@ -30,3 +30,4 @@ See [docs/adr/](docs/adr/).
 | 002 | Herdr Extension Seam | Accepted |
 | 003 | Optional Runtimes Policy | Accepted |
 | 004 | Dependency Update Cooling Period | Accepted |
+| 005 | Zsh Owned by Nix | Accepted |
