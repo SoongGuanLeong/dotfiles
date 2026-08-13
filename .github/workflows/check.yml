@@ -18,3 +18,17 @@ jobs:
           DOTFILES_USERNAME: runner
           DOTFILES_HOME: /home/runner
           DOTFILES_DIRECTORY: ${{ github.workspace }}
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@v3
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - name: Build activationPackage
+        run: nix build --impure .#homeConfigurations.default.activationPackage
+        env:
+          DOTFILES_USERNAME: runner
+          DOTFILES_HOME: /home/runner
+          DOTFILES_DIRECTORY: ${{ github.workspace }}
