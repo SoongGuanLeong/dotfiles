@@ -49,12 +49,13 @@ Two workstreams:
 | `envContract` | Machine-readable contract of required env vars and nixpkgs age threshold, consumed by `scripts/lib.sh` and `check-security.sh` |
 | `checks.${system}.registry` | Derivations that validate the registry JSON against declared packages in `home/` — run via `nix flake check` |
 
-### Gap
+### Gap (resolved)
 
-- No automated test that starts from a **truly clean WSL2 instance** and runs
-  `bootstrap.sh` end-to-end.
-- CI runs `check.sh` only; it does not build the Home Manager derivation.
-- No documented procedure for a human to perform a clean-machine test.
+| Gap | Status | Resolution |
+|---|---|---|
+| No automated clean WSL2 bootstrap test | ✅ Closed (#37, #38) | `scripts/wsl-end-to-end-test.ps1` automates WSL snapshot/restore + bootstrap + smoke test |
+| CI runs `check.sh` only, no build | ✅ Closed (#30) | CI job builds `activationPackage` |
+| No documented clean-machine test procedure | ✅ Closed (#38) | `docs/wsl-clean-machine-test.md` now script-first with automated procedure |
 
 ## Workstream 1: Clean-machine rebuild test protocol
 
@@ -115,11 +116,17 @@ Manager activation.
 
 ### Recommended strategy
 
-| Layer | Method | Where | Frequency |
-|---|---|---|---|
-| Fast gating | `nix build --impure .#homeConfigurations.default.activationPackage` | CI (ubuntu-latest) | Every push/PR |
-| Integration | Docker clean-room + bootstrap | CI (ubuntu-latest) | Nightly or pre-merge for sensitive changes |
-| Full validation | WSL snapshot/restore | Manual (human) | Before release / major env changes |
+| Layer | Method | Where | Frequency | Who |
+|---|---|---|---|---|
+| Fast gating | `nix build --impure .#homeConfigurations.default.activationPackage` | CI (ubuntu-latest) | Every push/PR | Automated |
+| Integration | Docker clean-room + bootstrap | CI (ubuntu-latest) | Nightly or pre-merge for sensitive changes | Automated |
+| Full validation | `scripts/wsl-end-to-end-test.ps1` (WSL snapshot/restore) | Windows host (PowerShell) | Before release / major env changes | Automated on demand |
+
+Since [#37](https://github.com/SoongGuanLeong/dotfiles/issues/37), Layer 3 is
+automated by `scripts/wsl-end-to-end-test.ps1`. Run on any WSL2 host to get a
+structured pass/fail report. See [WSL test procedure](../wsl-clean-machine-test.md)
+for quick start, or [Harness Validation](../wsl-harness-validation.md) for the
+full scenario suite.
 
 ### Manual WSL test procedure
 
@@ -234,13 +241,13 @@ This is deferred because it requires:
 ## Remaining work
 
 End state: "CI builds activationPackage, optional Docker clean-room for
-integration."
+integration, automated WSL clean-machine test."
 
-### Phase 1 (this ticket)
+### Phase 1
 - [x] Map document (this file)
 - [x] CI job: build activationPackage (issue #30)
 
-### Phase 2 (this ticket — issue #35)
+### Phase 2
 - [x] Dockerfile for clean-room integration test (`Dockerfile`)
 - [x] CI job: Docker clean-room integration — nightly + workflow_dispatch
       (`.github/workflows/integration.yml`)
@@ -248,8 +255,13 @@ integration."
       `bootstrap.sh` — keeps WSL2 prerequisites contract clean
 - [x] Flake revision: same commit (COPY repo in Dockerfile, not git clone) —
       tests exact revision
-- [ ] Document manual WSL snapshot/restore procedure in onboarding or
-      troubleshooting doc (deferred to separate ticket)
+
+### Phase 3 (issues #37, #38)
+- [x] Automated WSL end-to-end test script (`scripts/wsl-end-to-end-test.ps1`)
+- [x] WSL test scenario runner (`scripts/wsl-test-scenarios.ps1`)
+- [x] Harness validation doc (`docs/wsl-harness-validation.md`)
+- [x] Update `docs/wsl-clean-machine-test.md` to script-first (this ticket)
+- [x] Update map to mark Layer 3 automated (this ticket)
 
 ## References
 
