@@ -1,0 +1,19 @@
+name: "Integration"
+on:
+  schedule:
+    # Nightly at 06:00 UTC — catches regressions within 24h
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    # Allow manual trigger for pre-merge validation of sensitive changes
+
+jobs:
+  docker-activation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker test image
+        run: docker build -t dotfiles-test .
+
+      - name: Run Docker integration test
+        run: docker run dotfiles-test

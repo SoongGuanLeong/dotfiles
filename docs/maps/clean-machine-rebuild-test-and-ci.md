@@ -240,11 +240,16 @@ integration."
 - [x] Map document (this file)
 - [x] CI job: build activationPackage (issue #30)
 
-### Phase 2 (future ticket)
-- [ ] Dockerfile for clean-room bootstrap test
-- [ ] CI job: Docker clean-room integration (nightly or on-demand)
+### Phase 2 (this ticket — issue #35)
+- [x] Dockerfile for clean-room integration test (`Dockerfile`)
+- [x] CI job: Docker clean-room integration — nightly + workflow_dispatch
+      (`.github/workflows/integration.yml`)
+- [x] Entry point: test-specific script (`scripts/docker-test.sh`), not modified
+      `bootstrap.sh` — keeps WSL2 prerequisites contract clean
+- [x] Flake revision: same commit (COPY repo in Dockerfile, not git clone) —
+      tests exact revision
 - [ ] Document manual WSL snapshot/restore procedure in onboarding or
-      troubleshooting doc
+      troubleshooting doc (deferred to separate ticket)
 
 ## References
 
