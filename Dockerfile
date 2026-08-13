@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     git \
+    jq \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
@@ -33,10 +34,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # containers lack. Upstream --no-daemon installs root-owned single-user Nix
 # without a daemon — correct for containers.
 # Required packages: curl used above, xz-utils for the installer binary.
-RUN sh <(curl -fsSL https://nixos.org/nix/install) --no-daemon \
-    --nix-extra-conf-file /dev/stdin <<'NIXCONF'
-experimental-features = nix-command flakes
-NIXCONF
+RUN mkdir -m 0755 /nix \
+    && chown root /nix \
+    && groupadd -r nixbld \
+    && for i in $(seq 1 10); do useradd -r -g nixbld -G nixbld nixbld$i; done \
+    && curl -fsSL https://nixos.org/nix/install -o /tmp/nix-install.sh \
+    && sh /tmp/nix-install.sh --no-daemon \
+    && mkdir -p /etc/nix \
+    && printf '%s\n' 'experimental-features = nix-command flakes' > /etc/nix/nix.conf
 
 # Ensure nix is in PATH for non-interactive shells
 ENV PATH="/root/.nix-profile/bin:/nix/var/nix/profiles/default/bin:${PATH}"
@@ -49,6 +54,7 @@ WORKDIR /repo
 ENV DOTFILES_USERNAME=testuser
 ENV DOTFILES_HOME=/home/testuser
 ENV DOTFILES_DIRECTORY=/repo
+ENV USER=testuser
 
 # Run the Docker-specific test script
 CMD ["bash", "/repo/scripts/docker-test.sh"]
