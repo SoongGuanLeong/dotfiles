@@ -1,7 +1,7 @@
 # Map: Clean-machine rebuild test + CI
 
 **Issue:** [#24](https://github.com/SoongGuanLeong/dotfiles/issues/24)
-**Status:** Proposed
+**Status:** Active
 **Domain:** Nix flakes, Home Manager, WSL2, GitHub Actions
 
 ## Problem
@@ -41,6 +41,13 @@ Two workstreams:
 | `check-security.sh` | Nixpkgs revision age check + known vulnerability scan |
 | `bootstrap.sh` | Prerequisite validation (WSL2, systemd, Ubuntu, git, Nix, flakes) then check.sh then rebuild |
 | `rebuild.sh` | `nix run .#home-manager -- switch --flake .#default --impure` |
+
+### Other flake outputs
+
+| Output | What it provides |
+|---|---|
+| `envContract` | Machine-readable contract of required env vars and nixpkgs age threshold, consumed by `scripts/lib.sh` and `check-security.sh` |
+| `checks.${system}.registry` | Derivations that validate the registry JSON against declared packages in `home/` — run via `nix flake check` |
 
 ### Gap
 
@@ -84,12 +91,15 @@ pre-installed. The Dockerfile:
 6. Runs a post-bootstrap smoke test
 
 Docker-based approach runs on any GitHub Actions runner (ubuntu-latest can
-run Docker) and takes ~30-60s.
+run Docker) and takes ~2-5 min.
 
 **Pros:** Fast; CI-runner-native; no Windows/WSL2 dependency.
 **Pros:** Catches Nix install + flake eval + Home Manager activation issues.
 **Cons:** Does not test WSL2-specific prerequisites (systemd, `/proc/version`
 check); Docker container is not 1:1 with WSL2 kernel/subsystem.
+**Note:** Requires `--impure` flag because `home-manager` uses
+`builtins.currentSystem` internally, which Nix sandbox disallows in pure
+eval mode.
 
 #### C. Nix build-only test (simplest, already partially covered)
 
@@ -107,7 +117,7 @@ Manager activation.
 
 | Layer | Method | Where | Frequency |
 |---|---|---|---|
-| Fast gating | `nix build .#activationPackage` | CI (ubuntu-latest) | Every push/PR |
+| Fast gating | `nix build --impure .#homeConfigurations.default.activationPackage` | CI (ubuntu-latest) | Every push/PR |
 | Integration | Docker clean-room + bootstrap | CI (ubuntu-latest) | Nightly or pre-merge for sensitive changes |
 | Full validation | WSL snapshot/restore | Manual (human) | Before release / major env changes |
 
@@ -124,11 +134,15 @@ wsl -d Ubuntu -- bash -c '
   git clone https://github.com/SoongGuanLeong/dotfiles.git ~/projects/dotfiles
   cd ~/projects/dotfiles
   ./scripts/bootstrap.sh
-  exec zsh -l
   git --version
   nvim --version | head -1
   uv --version
-'
+  exec zsh -l
+' 
+
+**Caveat:** `wsl --import` runs as root by default. The non-root user
+context inside WSL must be set up separately (e.g., via `/etc/wsl.conf`
+default-UID or first-boot script) before bootstrap runs.
 ```
 
 Store `clean-wsl-base.tar` in a durable location (not in-repo; large binary).
@@ -224,7 +238,7 @@ integration."
 
 ### Phase 1 (this ticket)
 - [x] Map document (this file)
-- [ ] CI job: build activationPackage (issue #30)
+- [x] CI job: build activationPackage (issue #30)
 
 ### Phase 2 (future ticket)
 - [ ] Dockerfile for clean-room bootstrap test
