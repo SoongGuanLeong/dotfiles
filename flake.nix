@@ -20,10 +20,6 @@
         "DOTFILES_DIRECTORY"
       ];
 
-      # Expose required env vars for consumers (scripts).
-      # Used by scripts/lib.sh to enforce the contract centrally.
-      requiredEnvVarsJSON = pkgs.writeText "requiredEnvVars.json" (builtins.toJSON requiredEnvVars);
-
       # builtins.getEnv returns "" for both unset and empty variables, so
       # an empty string is treated as missing.
       missingEnvVars = builtins.filter
@@ -40,8 +36,13 @@
     in {
       packages.${system} = {
         home-manager = home-manager.packages.${system}.default;
-        requiredEnvVars = requiredEnvVarsJSON;
-        nixpkgsMinAgeDays = pkgs.writeText "nixpkgs-min-age-days" "14";
+      };
+
+      # Environment contract consumed by scripts/lib.sh and check-security.sh.
+      # Raw values (not derivations) — flake check does not validate non-standard outputs.
+      envContract = {
+        requiredEnvVars = requiredEnvVars;
+        nixpkgsMinAgeDays = builtins.toString 14;
       };
 
       checks.${system}.registry = pkgs.runCommand "registry-check" { buildInputs = [ pkgs.jq ]; } ''
