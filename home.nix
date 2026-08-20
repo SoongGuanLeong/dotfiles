@@ -29,7 +29,6 @@ in {
     lazygit
     bat
     uv
-    chromium
   ];
 
   home.file = builtins.listToAttrs (map toSymlink symlinks);
@@ -84,8 +83,6 @@ in {
         . "$NVM_DIR/nvm.sh"
         [[ -s "$NVM_DIR/bash_completion" ]] && . "$NVM_DIR/bash_completion"
       fi
-
-      export BROWSER=wslview
 
       # Optional: Java/Scala via SDKMAN.
       export SDKMAN_DIR="$HOME/.sdkman"

@@ -1,5 +1,5 @@
 {
-  description = "WSL2 Agentic Dev Environment";
+  description = "Ubuntu Agentic Dev Environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
