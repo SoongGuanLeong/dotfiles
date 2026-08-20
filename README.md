@@ -1,12 +1,12 @@
-# WSL2 Dotfiles
+# Linux Dotfiles
 
-Reproducible WSL2 development environment using **Nix flakes + Home Manager**.
+Reproducible Linux development environment using **Nix flakes + Home Manager**.
 
 ## Quick start
 
 Requirements:
 
-* WSL2
+* Linux with systemd
 * Nix with flakes enabled
 * Git
 
@@ -35,7 +35,7 @@ For daily iteration after changing dotfiles, use `./scripts/rebuild.sh`.
 | Node.js          | NVM (optional)     |
 | Java / Scala     | SDKMAN (optional)  |
 
-The repository intentionally does not manage secrets, Windows configuration, or runtime-specific state.
+The repository intentionally does not manage secrets or runtime-specific state.
 
 ## Design principles
 

@@ -1,19 +1,19 @@
 # Onboarding
 
-This guide gets a new WSL2 environment from zero to a working development shell.
+This guide gets a new Linux environment from zero to a working development shell.
 
 ## 1. Prerequisites
 
 Install and verify:
 
-* WSL2 with a Linux distribution
+* Linux with systemd
 * Git
 * Nix with flakes enabled
 
 Check:
 
 ```bash
-wsl --version
+systemctl --version
 git --version
 nix --version
 ```

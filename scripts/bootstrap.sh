@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Supported baseline
-# - OS:     Ubuntu Linux
+# - OS:     Linux
 # - Init:   systemd
 # - Tools:  git, Nix (with flakes enabled)
 #
 # Bootstrap will fail with a clear message if any prerequisite is missing.
-# This script supports native Ubuntu and WSL2 with systemd.
+# This script supports Linux with systemd.
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/lib.sh"
 
@@ -15,9 +15,6 @@ DOTFILES_DIRECTORY="$(dotfiles_directory)"
 
 [ -d /run/systemd/system ] ||
   die "systemd is required. This environment does not use systemd as init."
-
-grep -qi 'ID="\?ubuntu"\?' /etc/os-release 2>/dev/null ||
-  die "Ubuntu Linux is required. Other distributions are not supported."
 
 command -v git >/dev/null 2>&1 ||
   die "git is required"

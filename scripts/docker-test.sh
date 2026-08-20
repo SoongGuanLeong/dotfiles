@@ -4,7 +4,7 @@
 # Entry point for the Docker-based CI job (`.github/workflows/integration.yml`).
 # Runs in a clean ubuntu:24.04 container with no Nix pre-installed.
 #
-# Skips WSL2/systemd checks (inapplicable in Docker) and executes:
+# Executes the repository validation and activation build:
 #   1. scripts/check.sh — syntax, flake check, env precondition, security
 #   2. nix build --impure .#homeConfigurations.default.activationPackage
 #   3. Smoke test — verify activationPackage build + key CLI tools

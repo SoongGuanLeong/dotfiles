@@ -15,9 +15,7 @@ the bootstrap path without reading through script internals.
 
 | Prerequisite | Check Method | Error If Missing |
 |---|---|---|
-| WSL2 | `grep -qi microsoft /proc/version` | `WSL2 is required. This environment does not appear to be WSL.` |
-| systemd init | `[ -d /run/systemd/system ]` | `systemd is required. This environment does not use systemd as init.` |
-| Ubuntu Linux | `grep -qi 'ID="?ubuntu"?' /etc/os-release` | `Ubuntu Linux is required. Other distributions are not supported.` |
+| Linux with systemd | `[ -d /run/systemd/system ]` | `systemd is required. This environment does not use systemd as init.` |
 | `git` | `command -v git` | `git is required` |
 | Nix | `command -v nix` | `Nix is required. Install Nix before running bootstrap.sh.` |
 | Nix flakes enabled | `nix flake metadata "$DOTFILES_DIRECTORY"` | `Nix flakes are not available. Enable flakes before running bootstrap.sh.` |
@@ -33,15 +31,12 @@ The following are not explicitly checked but are assumed by downstream steps:
 
 ## Unsupported Environments
 
-`bootstrap.sh` explicitly does **not** support:
+`bootstrap.sh` is intended for Linux systems using systemd.
 
 | Environment | Reason |
 |---|---|
-| Bare-metal Linux (non-WSL) | `/proc/version` check fails |
-| WSL without systemd | `/run/systemd/system` check fails |
-| Docker containers | WSL2 checks fail; no `/proc/version` Microsoft signature |
-| Non-Ubuntu distributions | `/etc/os-release` ID check fails |
-| macOS | No WSL2, no systemd |
+| Linux without systemd | systemd is required for the user services managed by Home Manager |
+| macOS | This configuration targets Linux |
 
 ## Canonical Entry Point
 
@@ -49,19 +44,6 @@ The following are not explicitly checked but are assumed by downstream steps:
 rebuild. It performs all prerequisite checks, runs `scripts/check.sh` for
 validation, then calls `scripts/rebuild.sh` to apply the Home Manager
 configuration via `nix run .#home-manager -- switch --flake .#default --impure`.
-
-## Docker / Clean-Room Testing
-
-Docker-based clean-room testing (defined in
-[Map: Clean-machine rebuild test + CI](maps/clean-machine-rebuild-test-and-ci.md))
-requires a **different entry point** that skips WSL2 checks. A Docker container
-does not satisfy the WSL2 or systemd prerequisites. Running `bootstrap.sh`
-inside Docker will fail at the WSL2 check.
-
-For Docker integration testing, use either:
-
-- A test-specific script that runs `scripts/check.sh` + `nix build` directly
-- A modified `bootstrap.sh` with the WSL2 check bypassed
 
 ## Environment Contract
 

@@ -2,9 +2,6 @@ local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
--- WSL
-config.default_prog = { "wsl.exe", "-d", "Ubuntu" }
-
 -- Appearance
 config.color_scheme = "rose-pine-moon"
 config.font = wezterm.font("Hack Nerd Font")

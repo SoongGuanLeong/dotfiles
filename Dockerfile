@@ -9,7 +9,7 @@
 #
 # Design decisions:
 #   - Entry point: test-specific script (scripts/docker-test.sh), not modified
-#     bootstrap.sh — keeps WSL2 prerequisites contract clean
+#     bootstrap.sh — keeps the systemd prerequisite contract clean
 #   - Flake revision: same commit (COPY repo, not git clone) — tests exact revision
 #   - Nix store cache: cold per run — acceptable for nightly frequency;
 #     future: layer caching or GitHub Actions cache mount

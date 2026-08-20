@@ -1,275 +1,284 @@
 # Map: Clean-machine rebuild test + CI
 
-**Issue:** [#24](https://github.com/SoongGuanLeong/dotfiles/issues/24)
-**Status:** Active
-**Domain:** Nix flakes, Home Manager, WSL2, GitHub Actions
-
 ## Problem
 
-The dotfiles repository needs a validated, automated pipeline proving it can
-reproduce a working WSL2 agentic development environment from a clean machine,
-and that every change is checked by CI before landing.
+The dotfiles repository must be reproducible from a clean Linux machine.
 
-Two workstreams:
+The validation strategy should prove three things:
 
-1. **A reproducible clean-machine rebuild test protocol** — prove the whole
-   bootstrap works from zero on a fresh WSL2 instance.
-2. **A GitHub Actions CI workflow** — run `./scripts/check.sh` on every push/PR
-   (already done in [#21] / [#27]) plus a heavier `nix build` step ([#30]).
+1. Repository validation passes.
+2. The Home Manager configuration evaluates and builds successfully.
+3. A clean Linux environment can bootstrap and activate the configuration.
 
-[#21]: https://github.com/SoongGuanLeong/dotfiles/issues/21
-[#27]: https://github.com/SoongGuanLeong/dotfiles/issues/27
-[#30]: https://github.com/SoongGuanLeong/dotfiles/issues/30
+Windows and WSL-specific integration are intentionally outside the project scope.
 
 ## Current state
 
 ### CI
 
-`.github/workflows/check.yml` runs on ubuntu-latest:
+The repository has two CI workflows.
 
-1. `actions/checkout@v4`
-2. `DeterminateSystems/determinate-nix-action@v3` — installs Nix
-3. `DeterminateSystems/magic-nix-cache-action@v9` — caches Nix store
-4. `./scripts/check.sh` — shell syntax, Nix syntax, flake check, env
-   precondition check, security audit
+#### Check workflow
+
+`.github/workflows/check.yml` runs on pushes to `master` and pull requests.
+
+It performs:
+
+1. `scripts/check.sh`
+2. Home Manager activation package build
+
+The build uses:
+
+```bash
+nix build --impure .#homeConfigurations.default.activationPackage
+```
+
+Required `DOTFILES_*` environment variables are provided by the workflow.
+
+#### Integration workflow
+
+`.github/workflows/integration.yml` runs nightly and can also be triggered
+manually.
+
+It builds and runs the Docker integration test:
+
+```bash
+docker build -t dotfiles-test .
+docker run dotfiles-test
+```
 
 ### Local validation scripts
 
-| Script | What it does |
-|---|---|
-| `check.sh` | Git diff, shell syntax, Nix syntax, flake check, env precondition, security audit |
-| `check-security.sh` | Nixpkgs revision age check + known vulnerability scan |
-| `bootstrap.sh` | Prerequisite validation (WSL2, systemd, Ubuntu, git, Nix, flakes) then check.sh then rebuild |
-| `rebuild.sh` | `nix run .#home-manager -- switch --flake .#default --impure` |
+The primary validation entry points are:
 
-### Other flake outputs
+* `scripts/check.sh` — static and repository validation
+* `scripts/rebuild.sh` — apply the Home Manager configuration
+* `scripts/bootstrap.sh` — validate prerequisites, run checks, then rebuild
+* `scripts/docker-test.sh` — clean Linux container integration test
 
-| Output | What it provides |
-|---|---|
-| `envContract` | Machine-readable contract of required env vars and nixpkgs age threshold, consumed by `scripts/lib.sh` and `check-security.sh` |
-| `checks.${system}.registry` | Derivations that validate the registry JSON against declared packages in `home/` — run via `nix flake check` |
+### Flake outputs
 
-### Gap (resolved)
+The flake provides:
 
-| Gap | Status | Resolution |
-|---|---|---|
-| No automated clean WSL2 bootstrap test | ✅ Closed (#37, #38) | `scripts/wsl-end-to-end-test.ps1` automates WSL snapshot/restore + bootstrap + smoke test |
-| CI runs `check.sh` only, no build | ✅ Closed (#30) | CI job builds `activationPackage` |
-| No documented clean-machine test procedure | ✅ Closed (#38) | `docs/wsl-clean-machine-test.md` now script-first with automated procedure |
+* `packages.x86_64-linux.home-manager`
+* `homeConfigurations.default`
+* `checks.x86_64-linux.registry`
+* `envContract`
 
-## Workstream 1: Clean-machine rebuild test protocol
+The registry check validates that files managed under `home/` are represented
+by `registry.json` or explicitly exempted through `skip-list.json`.
 
-### Approaches
+## Clean-machine validation
 
-#### A. WSL snapshot/restore (recommended for manual testing)
+A clean-machine test should use a fresh Linux environment with:
 
-Export a clean base WSL2 image, restore, run bootstrap, validate, repeat.
+* Linux
+* systemd
+* Git
+* Nix with flakes enabled
 
-```text
-wsl --export <distro> clean-base.tar
-  ─────────────────────────────────────►
-wsl --unregister <distro>
-wsl --import <distro> <install-dir> clean-base.tar
-wsl -d <distro> --exec bash -c "
-  cd ~/projects/dotfiles && ./scripts/bootstrap.sh
-"
-```
-
-**Pros:** Reflects real user workflow; catches OS-level issues.
-**Cons:** Slow (minutes per cycle); requires WSL2 host (Windows); not
-practical to run on every commit.
-
-#### B. Docker-based clean-room test (recommended for CI/automation)
-
-Use a Docker container with the same base OS (Ubuntu 24.04 LTS), no Nix
-pre-installed. The Dockerfile:
-
-1. Starts from `ubuntu:24.04`
-2. Installs git + curl + xz-utils
-3. Installs Nix via the Determinate Nix Installer (multi-user)
-4. Clones the dotfiles repo at the tested revision
-5. Runs `./scripts/bootstrap.sh`
-6. Runs a post-bootstrap smoke test
-
-Docker-based approach runs on any GitHub Actions runner (ubuntu-latest can
-run Docker) and takes ~2-5 min.
-
-**Pros:** Fast; CI-runner-native; no Windows/WSL2 dependency.
-**Pros:** Catches Nix install + flake eval + Home Manager activation issues.
-**Cons:** Does not test WSL2-specific prerequisites (systemd, `/proc/version`
-check); Docker container is not 1:1 with WSL2 kernel/subsystem.
-**Note:** Requires `--impure` flag because `home-manager` uses
-`builtins.currentSystem` internally, which Nix sandbox disallows in pure
-eval mode.
-
-#### C. Nix build-only test (simplest, already partially covered)
-
-`nix build --impure .#homeConfigurations.default.activationPackage` evaluates the flake
-and builds the derivation closure **without** activating. This proves the
-configuration is valid and all dependencies are resolvable, but does not test
-the bootstrap workflow or activation script execution.
-
-**Pros:** Fast (~10-30s); no Docker or WSL2 needed; already fits CI.
-**Pros:** Catches eval errors and missing derivations.
-**Cons:** Does not exercise bootstrap.sh, WSL2 prerequisites, or Home
-Manager activation.
-
-### Recommended strategy
-
-| Layer | Method | Where | Frequency | Who |
-|---|---|---|---|---|
-| Fast gating | `nix build --impure .#homeConfigurations.default.activationPackage` | CI (ubuntu-latest) | Every push/PR | Automated |
-| Integration | Docker clean-room + bootstrap | CI (ubuntu-latest) | Nightly or pre-merge for sensitive changes | Automated |
-| Full validation | `scripts/wsl-end-to-end-test.ps1` (WSL snapshot/restore) | Windows host (PowerShell) | Before release / major env changes | Automated on demand |
-
-Since [#37](https://github.com/SoongGuanLeong/dotfiles/issues/37), Layer 3 is
-automated by `scripts/wsl-end-to-end-test.ps1`. Run on any WSL2 host to get a
-structured pass/fail report. See [WSL test procedure](../wsl-clean-machine-test.md)
-for quick start, or [Harness Validation](../wsl-harness-validation.md) for the
-full scenario suite.
-
-### Manual WSL test procedure
+The canonical entry point is:
 
 ```bash
-# Export a clean base WSL2 image (one-time after fresh install)
-wsl --export Ubuntu clean-wsl-base.tar
-
-# For each test cycle:
-wsl --unregister Ubuntu
-wsl --import Ubuntu C:\WSL\clean-test clean-wsl-base.tar
-wsl -d Ubuntu -- bash -c '
-  git clone https://github.com/SoongGuanLeong/dotfiles.git ~/projects/dotfiles
-  cd ~/projects/dotfiles
-  ./scripts/bootstrap.sh
-  git --version
-  nvim --version | head -1
-  uv --version
-  exec zsh -l
-' 
-
-**Caveat:** `wsl --import` runs as root by default. The non-root user
-context inside WSL must be set up separately (e.g., via `/etc/wsl.conf`
-default-UID or first-boot script) before bootstrap runs.
+./scripts/bootstrap.sh
 ```
 
-Store `clean-wsl-base.tar` in a durable location (not in-repo; large binary).
+The expected sequence is:
 
-## Workstream 2: CI pipeline
-
-### Current CI
-
-```yaml
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/determinate-nix-action@v3
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
-      - run: ./scripts/check.sh
-        env:
-          DOTFILES_USERNAME: runner
-          DOTFILES_HOME: /home/runner
-          DOTFILES_DIRECTORY: ${{ github.workspace }}
+```text
+clean Linux environment
+        |
+        v
+bootstrap.sh
+        |
+        +--> prerequisite validation
+        |
+        +--> check.sh
+        |
+        +--> rebuild.sh
+        |
+        v
+Home Manager activation
+        |
+        v
+working development environment
 ```
 
-### Proposed CI structure
+After activation, verify:
 
-Two jobs:
-
-```yaml
-jobs:
-  check:
-    # Same as current — fast validation gate
-    ...
-  build:
-    needs: check  # only runs if check passes
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/determinate-nix-action@v3
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
-      - name: Build activationPackage
-        run: nix build --impure .#homeConfigurations.default.activationPackage
-        env:
-          DOTFILES_USERNAME: runner
-          DOTFILES_HOME: /home/runner
-          DOTFILES_DIRECTORY: ${{ github.workspace }}
+```bash
+git --version
+nvim --version | head -1
+uv --version
 ```
 
-### Rationale for separate job (not merging into check.sh)
+Optional runtime managers such as NVM and SDKMAN are not required for a
+successful base installation.
 
-Per issue #30 rationale: `check.sh` is a fast local validation gate. The Nix
-build is heavier and should stay in CI only. Developers run `check.sh` locally
-before committing; they do not need to wait for a full flake build.
+## Clean-room testing approaches
 
-### Future: Docker clean-room integration test
+### A. Docker integration test
 
-For a nightly or pre-merge job, add a third job:
+Docker provides a fast, repeatable Linux clean-room environment.
 
-```yaml
-  integration:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Bootstrap in clean Ubuntu container
-        run: |
-          docker build -t dotfiles-test -f - .
-          docker run dotfiles-test
+Advantages:
+
+* Fast
+* Reproducible
+* Easy to run in CI
+* No special host setup
+
+Limitations:
+
+* Does not reproduce a complete systemd host
+* Does not validate every host-level prerequisite
+* Does not prove that the configuration works on a persistent Linux machine
+
+The Docker test should therefore complement, rather than replace, real-machine
+validation.
+
+### B. Real Linux machine or VM
+
+A clean Linux VM provides the strongest validation of the actual bootstrap
+contract.
+
+Test procedure:
+
+1. Start from a fresh Linux installation.
+2. Ensure systemd is running.
+3. Install Git.
+4. Install Nix with flakes enabled.
+5. Clone the repository.
+6. Run `./scripts/bootstrap.sh`.
+7. Start a fresh shell.
+8. Verify the base environment.
+9. Repeat after destroying and recreating the VM when major bootstrap changes
+   are made.
+
+This is the authoritative clean-machine test.
+
+### C. Nix build validation
+
+CI should continue to build the Home Manager activation package:
+
+```bash
+nix build --impure .#homeConfigurations.default.activationPackage
 ```
 
-With a Dockerfile equivalent to the manual WSL procedure above.
+This catches evaluation and build failures without requiring a complete machine
+activation.
 
-This is deferred because it requires:
-- A Dockerfile checked into the repo (or generated inline)
-- Handling the flake lock within the container
-- Deciding whether to test the same revision or the merged master
+## Recommended validation strategy
 
-## Decisions
+Use four layers:
 
-1. **CI is separate from check.sh.** The script stays fast for local use;
-   heavier validation lives in CI jobs only.
-2. **activationPackage build is the next CI addition.** This is the simplest
-   meaningful build test and unblocks the rest of the CI workstream.
-3. **Docker clean-room testing is deferred.** Worth doing, but requires design
-   decisions about the Dockerfile, test scope, and scheduling.
-4. **WSL snapshot/restore is manual only.** The WSL2 dependency and cycle time
-   make it impractical for CI. Document the procedure for pre-release
-   validation.
+| Layer       | Mechanism              | Purpose                                        |
+| ----------- | ---------------------- | ---------------------------------------------- |
+| Static      | `scripts/check.sh`     | Fast repository validation                     |
+| Build       | `nix build`            | Validate Nix/Home Manager evaluation and build |
+| Integration | Docker test            | Validate clean Linux execution                 |
+| Full        | Fresh Linux VM/machine | Validate complete bootstrap contract           |
+
+The first three layers belong in normal development and CI.
+
+The full Linux machine test should be performed before releases and after
+significant changes to bootstrap, Home Manager activation, systemd integration,
+or core environment configuration.
+
+## CI responsibilities
+
+CI should remain fast and deterministic.
+
+Pull requests should run:
+
+```text
+check
+  |
+  v
+activation build
+```
+
+The integration workflow should provide:
+
+```text
+Docker build
+  |
+  v
+Docker integration test
+```
+
+The full clean-machine test does not need to run on every pull request because
+it requires a real Linux system and has a higher execution cost.
+
+## Failure boundaries
+
+Failures should be diagnosed according to the layer that failed.
+
+### `scripts/check.sh` failure
+
+Repository or configuration validation failed.
+
+Run:
+
+```bash
+./scripts/check.sh
+```
+
+### Nix build failure
+
+The configuration cannot be evaluated or built.
+
+Run:
+
+```bash
+nix build --impure .#homeConfigurations.default.activationPackage
+```
+
+### Docker integration failure
+
+The configuration or runtime assumptions are incompatible with the clean
+container environment.
+
+Run:
+
+```bash
+./scripts/docker-test.sh
+```
+
+### Clean-machine bootstrap failure
+
+The bootstrap contract or system integration is broken.
+
+Run:
+
+```bash
+./scripts/bootstrap.sh
+```
+
+Inspect the first failing prerequisite or activation step.
+
+## Design decisions
+
+1. Linux is the supported operating-system target.
+2. systemd is part of the supported baseline.
+3. Docker is an integration-test environment, not the production target.
+4. The real Linux clean-machine test is the strongest end-to-end validation.
+5. CI should prioritize fast deterministic checks.
+6. Project-specific dependencies remain inside individual projects.
 
 ## Remaining work
 
-End state: "CI builds activationPackage, optional Docker clean-room for
-integration, automated WSL clean-machine test."
-
-### Phase 1
-- [x] Map document (this file)
-- [x] CI job: build activationPackage (issue #30)
-
-### Phase 2
-- [x] Dockerfile for clean-room integration test (`Dockerfile`)
-- [x] CI job: Docker clean-room integration — nightly + workflow_dispatch
-      (`.github/workflows/integration.yml`)
-- [x] Entry point: test-specific script (`scripts/docker-test.sh`), not modified
-      `bootstrap.sh` — keeps WSL2 prerequisites contract clean
-- [x] Flake revision: same commit (COPY repo in Dockerfile, not git clone) —
-      tests exact revision
-
-### Phase 3 (issues #37, #38)
-- [x] Automated WSL end-to-end test script (`scripts/wsl-end-to-end-test.ps1`)
-- [x] WSL test scenario runner (`scripts/wsl-test-scenarios.ps1`)
-- [x] Harness validation doc (`docs/wsl-harness-validation.md`)
-- [x] Update `docs/wsl-clean-machine-test.md` to script-first (this ticket)
-- [x] Update map to mark Layer 3 automated (this ticket)
+* Keep `scripts/check.sh` and the Nix build green in CI.
+* Keep the Docker integration test green.
+* Periodically perform a clean Linux VM/machine bootstrap.
+* Update this document when the validation architecture changes.
 
 ## References
 
-- [Architecture](../architecture.md) — Nix + Home Manager layering
-- [Development](../development.md) — validation workflow
-- [Onboarding](../onboarding.md) — bootstrap steps
-- [check.yml](../../.github/workflows/check.yml) — current CI
-- [check.sh](../../scripts/check.sh) — validation script
-- [bootstrap.sh](../../scripts/bootstrap.sh) — prerequisite validation + activation
-- [Issue #30](https://github.com/SoongGuanLeong/dotfiles/issues/30) —
-  activationPackage CI build
+* [`scripts/bootstrap.sh`](../../scripts/bootstrap.sh)
+* [`scripts/check.sh`](../../scripts/check.sh)
+* [`scripts/rebuild.sh`](../../scripts/rebuild.sh)
+* [`scripts/docker-test.sh`](../../scripts/docker-test.sh)
+* [`docs/bootstrap-contract.md`](../bootstrap-contract.md)
+* [`docs/architecture.md`](../architecture.md)
+* [`docs/development.md`](../development.md)

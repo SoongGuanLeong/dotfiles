@@ -30,7 +30,6 @@ Personal preferences that apply across projects.
 
 ## Environment
 
-- Windows: use WSL2 Ubuntu for development.
-- macOS/Linux: use directly.
-- Keep projects under ~/projects.
-- Use Linux paths; never /mnt/* for project files.
+- Linux with systemd is the supported environment.
+- Keep projects under `~/projects`.
+- Use Linux paths for project files.

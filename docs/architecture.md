@@ -148,7 +148,6 @@ Each piece of configuration should have one clear owner.
 | Java / Scala          | SDKMAN                             |
 | Project dependencies  | Individual project                 |
 | Secrets               | External secret management         |
-| Windows configuration | Windows / WSL integration          |
 
 Avoid having multiple systems manage the same resource.
 
