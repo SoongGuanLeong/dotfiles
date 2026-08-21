@@ -9,7 +9,7 @@ let
     name = target;
     value = {
       source = config.lib.file.mkOutOfStoreSymlink
-        "*${dotfilesDirectory}*/*${source}*";
+        "${dotfilesDirectory}/${source}";
     };
   };
 in
@@ -35,6 +35,7 @@ in
     lazygit
     bat
     uv
+    wezterm
   ];
 
   home.file = builtins.listToAttrs (map toSymlink symlinks);
