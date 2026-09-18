@@ -35,7 +35,8 @@ in
     lazygit
     bat
     uv
-    wezterm
+    shellcheck
+    grok-cli
   ];
 
   home.file = builtins.listToAttrs (map toSymlink symlinks);
