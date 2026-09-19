@@ -29,7 +29,8 @@
 
     initContent = ''
       export PATH="/usr/local/cuda/bin:$PATH";
-      export PATH="$HOME/.opencode/bin:$PATH";
+      export PATH="$HOME/.opencode/bin:$PATH"
+      export PATH="$HOME/.local/bin:$PATH";
 
       # Optional: Node.js via NVM.
       export NVM_DIR="$HOME/.nvm"
